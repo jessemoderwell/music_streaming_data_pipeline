@@ -1,50 +1,52 @@
 # DROP TABLES
 
-songplay_table_drop = "drop table songplays"
-user_table_drop = "drop table users"
-song_table_drop = "drop table songs"
-artist_table_drop = "drop table artists"
-time_table_drop = "drop table time"
+songplay_table_drop = "drop table if exists songplays"
+user_table_drop = "drop table if exists users"
+song_table_drop = "drop table if exists songs"
+artist_table_drop = "drop table if exists artists"
+time_table_drop = "drop table if exists time"
 
 # CREATE TABLES
 
-songplay_table_create = ("""create table if not exists songplays (songplay_id int, start_time date, user_id int, level varchar, song_id int, artist_id int, location varchar, user_agent varchar)
+songplay_table_create = ("""create table if not exists songplays (songplay_id bigint, start_time bigint, user_id int, level varchar, song_id varchar, artist_id varchar, location varchar, user_agent varchar)
 """)
 
 user_table_create = ("""create table if not exists users (user_id int, first_name varchar, last_name varchar, gender varchar, level varchar, primary key (user_id))
 """)
 
-song_table_create = ("""create table if not exists songs (song_id int, title varchar, artist_id int, year int, duration int, primary key (song_id))
+song_table_create = ("""create table if not exists songs (song_id varchar, title varchar, artist_id varchar, year int, duration int, primary key (song_id))
 """)
 
-artist_table_create = ("""create table if not exists artists (artist_id int, name varchar, location varchar, latitude numeric, longitude numeric, primary key (artist_id))
+artist_table_create = ("""create table if not exists artists (artist_id varchar, name varchar, location varchar, latitude numeric, longitude numeric, primary key (artist_id))
 """)
 
-time_table_create = ("""create table if not exists time (start_time date, hour int, day int, week int, month int, year int, weekday int, primary key (song_id))
+time_table_create = ("""create table if not exists time (start_time bigint, hour int, day int, week int, month int, year int, weekday int)
 """)
 
 # INSERT RECORDS
 
-songplay_table_insert = ("""
+songplay_table_insert = ("""insert into songplays (start_time, user_id, level, song_id, artist_id, songplay_id, location, user_agent) values ({}, {}, '{}', '{}', '{}', '{}', '{}', '{}')
 """)
 
-user_table_insert = ("""
+user_table_insert = ("""insert into users (user_id, first_name, last_name, gender, level) values ('{}', '{}', '{}', '{}', '{}')
 """)
 
-song_table_insert = ("""
+song_table_insert = ("""insert into songs (song_id, artist_id, year, duration) values ('{}', '{}', {}, {})
 """)
 
-artist_table_insert = ("""
+artist_table_insert = ("""insert into artists (artist_id, name, location, latitude, longitude) values ('{}', '{}', '{}', '{}', '{}')
 """)
 
 
-time_table_insert = ("""
+time_table_insert = ("""insert into time (hour, day, week, month, year, weekday) values ({}, {}, {}, {}, {}, {})
 """)
 
 # FIND SONGS
 
-song_select = ("""
-""")
+song_select = ("""select s.song_id, a.artist_id from songs s join artists a on s.artist_id = a.artist_id
+where s.title = '{}'
+and a.name = '{}'
+and s.duration = {};""")
 
 # QUERY LISTS
 
