@@ -9,18 +9,18 @@ def process_song_file(cur, filepath):
     """
     - inserts a single record from a song_data json into songs and artists tables
     """
-    
+
     # open song file
     df = pd.read_json(filepath, lines=True)
     # replace single quotation in strings with single quotes to avoid sql syntax error
     df['artist_name'] = df['artist_name'].str.replace("'", "''")
     df['title'] = df['title'].str.replace("'", "''")
-    
+
 
     # insert song record
     song_data = df[['song_id', 'artist_id', 'year', 'duration', 'title']].values[0]
     cur.execute(song_table_insert.format(*list(song_data)))
-    
+
     # insert artist record
     artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0]
     cur.execute(artist_table_insert.format(*list(artist_data)))
@@ -30,7 +30,7 @@ def process_log_file(cur, filepath):
     """
     - inserts all relevant fields from a log_data json into time, users and songplays tables
     """
-    
+
     # open log file
     df = pd.read_json(filepath, lines=True)
     # replace single quotation in strings with single quotes to avoid sql syntax error
@@ -42,7 +42,7 @@ def process_log_file(cur, filepath):
 
     # convert timestamp column to datetime
     t = pd.to_datetime(df['ts'], unit = 'ms')
-    
+
     # insert time data records
     time_data = [(int(ts.timestamp() * 1000), ts.hour, ts.day, ts.week, ts.month, ts.year, ts.weekday()) for ts in t]
     column_labels = (['timestamp', 'hour', 'day', 'week', 'month', 'year', 'weekday'])
@@ -59,18 +59,18 @@ def process_log_file(cur, filepath):
 
     # insert songplay records
     for index, row in df.iterrows():
-        
+
         # get songid and artistid from song and artist tables
         cur.execute(song_select.format(row.song, row.artist, row.length))
         results = cur.fetchone()
-        
+
         if results:
             songid, artistid = results
         else:
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = (row['ts'], row['userId'], row['level'], songid, artistid, row['location'], row['userAgent'])
+        songplay_data = (row['ts'], row['userId'], row['level'], songid, artistid, row['sessionId'], row['itemInSession'], row['location'], row['userAgent'])
         cur.execute(songplay_table_insert.format(*songplay_data))
 
 
