@@ -8,27 +8,27 @@ time_table_drop = "drop table if exists time"
 
 # CREATE TABLES
 
-songplay_table_create = ("""create table if not exists songplays (songplay_id varchar, start_time bigint, user_id int, level varchar, song_id varchar, artist_id varchar, location varchar, user_agent varchar, primary key(songplay_id))
+songplay_table_create = ("""create table if not exists songplays (songplay_id serial, start_time bigint not null, user_id int not null, level varchar, song_id varchar, artist_id varchar, location varchar, user_agent varchar, primary key(songplay_id))
 """)
 
-user_table_create = ("""create table if not exists users (user_id int, first_name varchar, last_name varchar, gender varchar, level varchar, primary key (user_id))
+user_table_create = ("""create table if not exists users (user_id int not null, first_name varchar, last_name varchar, gender varchar, level varchar, primary key (user_id))
 """)
 
-song_table_create = ("""create table if not exists songs (song_id varchar, title varchar, artist_id varchar, year int, duration numeric, primary key (song_id))
+song_table_create = ("""create table if not exists songs (song_id varchar not null, title varchar, artist_id varchar, year int, duration numeric, primary key (song_id))
 """)
 
-artist_table_create = ("""create table if not exists artists (artist_id varchar, name varchar, location varchar, latitude numeric, longitude numeric, primary key (artist_id))
+artist_table_create = ("""create table if not exists artists (artist_id varchar not null, name varchar, location varchar, latitude numeric, longitude numeric, primary key (artist_id))
 """)
 
-time_table_create = ("""create table if not exists time (start_time bigint, hour int, day int, week int, month int, year int, weekday int)
+time_table_create = ("""create table if not exists time (start_time bigint not null, hour int, day int, week int, month int, year int, weekday int, primary key (start_time))
 """)
 
 # INSERT RECORDS
 
-songplay_table_insert = ("""insert into songplays (start_time, user_id, level, song_id, artist_id, songplay_id, location, user_agent) values ({}, {}, '{}', '{}', '{}', concat('{}', '{}'), '{}', '{}') on conflict (songplay_id) do nothing
+songplay_table_insert = ("""insert into songplays (start_time, user_id, level, song_id, artist_id, location, user_agent) values ({}, {}, '{}', '{}', '{}', '{}', '{}') on conflict (songplay_id) do nothing
 """)
 
-user_table_insert = ("""insert into users (user_id, first_name, last_name, gender, level) values ('{}', '{}', '{}', '{}', '{}') on conflict (user_id) do nothing
+user_table_insert = ("""insert into users (user_id, first_name, last_name, gender, level) values ('{}', '{}', '{}', '{}', '{}') on conflict (user_id) do update SET level=EXCLUDED.level
 """)
 
 song_table_insert = ("""insert into songs (song_id, artist_id, year, duration, title) values ('{}', '{}', {}, {}, '{}')
@@ -38,7 +38,7 @@ artist_table_insert = ("""insert into artists (artist_id, name, location, latitu
 """)
 
 
-time_table_insert = ("""insert into time (start_time, hour, day, week, month, year, weekday) values ({}, {}, {}, {}, {}, {}, {})
+time_table_insert = ("""insert into time (start_time, hour, day, week, month, year, weekday) values ({}, {}, {}, {}, {}, {}, {}) on conflict (start_time) do nothing
 """)
 
 # FIND SONGS
